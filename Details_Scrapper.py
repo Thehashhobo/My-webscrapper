@@ -19,7 +19,8 @@ def remove_by_type(s):
             # print(token)
             remove_digits = str.maketrans('', '', digits)
             res = str(token).translate(remove_digits)
-            new_sentence.append(res)
+            if res != "\u00ae":
+                new_sentence.append(res)
     return new_sentence
 
 
@@ -41,6 +42,11 @@ def extract_details(input_file, output_file):
         soup = BeautifulSoup(html_text, 'lxml')
         ingredient_spans = soup.find_all('span', attrs={'data-ingredient-name': 'true'})
         temp_name = soup.find('h1', class_='comp type--lion article-heading mntl-text-block').text
+        temp_image = soup.find('img')
+        try:
+            src_value = temp_image.attrs['src']
+        except KeyError:
+            src_value = temp_image.attrs['data-src']
         temp_name = temp_name.strip()
         for ingredient in ingredient_spans:
             ingredients.append(remove_by_type(ingredient.text))
@@ -55,7 +61,7 @@ def extract_details(input_file, output_file):
         except AttributeError:
             temp_rating = None
 
-        new_recipe = Recipe(counter, temp_name, ingredients, data, temp_time, temp_rating)
+        new_recipe = Recipe(counter, temp_name, ingredients, data, temp_time, temp_rating, src_value)
         json_input.append(encode_recipe(new_recipe))
 
         data = infile.readline()
