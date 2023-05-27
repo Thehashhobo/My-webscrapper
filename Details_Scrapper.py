@@ -1,41 +1,54 @@
-from bs4 import BeautifulSoup
+import json
 import requests
 import spacy
-from string import digits
-import json
+from bs4 import BeautifulSoup
 
 from Recipe import Recipe, encode_recipe
 
 nlp = spacy.load("en_core_web_sm")
-excluded_tags = {"VERB", 'SYM', 'PUNCT', 'ADJ', 'ADP', 'CCONJ'}
+excluded_tags = {"VERB", 'SYM', 'PUNCT', 'ADJ', 'ADP', 'CCONJ', 'PROPN'}
+
+common_words = {"and", "minced", "peeled", "diced", "chopped", "pitted", "grated", "shredded",
+                "sliced", "crushed", "mashed", "julienned", "zested", "de-seeded",
+                "deveined", "cubed", "halved", "quartered", "trimmed", "husked", "whole", "dried"}
+
+
+def clean_up_ingredients(s):
+    print(s)
+    for word in common_words:
+        if word in s:
+            s = s.replace(word, '')
+    s = s.strip()
+    return s
+
 
 """use Spacy to remove unwanted words from ingredients."""
 
 
 def remove_by_type(s):
     new_sentence = []
-    for token in nlp(s):
-        if token.pos_ not in excluded_tags:
-            # print(token)
-            remove_digits = str.maketrans('', '', digits)
-            res = str(token).translate(remove_digits)
-            if res != "\u00ae":
-                new_sentence.append(res)
+    doc = nlp(s)
+    for chunk in doc.noun_chunks:
+        if chunk.text:
+            new_sentence.append(clean_up_ingredients(chunk.text))
+            break
     return new_sentence
 
 
-"""extracts each recipe from the complete lists of urls and stores them in a JSON file"""
+"""extracts each recipe from the complete lists of urls and stores them in a JSON file
+    - clean_ingredients: boolean on whether to clean up ingredients
+"""
 
 
-def extract_details(input_file, output_file):
+def extract_details(input_file, output_file, clean_ingredients):
     json_input = []
     infile = open(input_file, 'r', encoding='utf8')
     outfile = open(output_file, 'w', encoding='utf8')
     data = infile.readline()
     data = data.strip()
+    counter = 0
 
     while data != '':
-        counter = 0
         data = data.strip()
         ingredients = []
         html_text = requests.get(data, allow_redirects=False).text
@@ -48,8 +61,12 @@ def extract_details(input_file, output_file):
         except KeyError:
             src_value = temp_image.attrs['data-src']
         temp_name = temp_name.strip()
-        for ingredient in ingredient_spans:
-            ingredients.append(remove_by_type(ingredient.text))
+        if clean_ingredients:
+            for ingredient in ingredient_spans:
+                ingredients.append(remove_by_type(ingredient.text))
+        else:
+            for ingredient in ingredient_spans:
+                ingredients.append(ingredient.text)
         try:
             temp_time = soup.find('div', class_='mntl-recipe-details__value').text
         except AttributeError:
