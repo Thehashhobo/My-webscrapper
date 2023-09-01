@@ -16,7 +16,7 @@ def find_all_alphabet_links(soup):
 """find all links of sub sections grouped within each alphabetical list"""
 
 
-def find_section_link(url):
+def find_section_link(url: str):
     html_text = requests.get(url).text
     soup = BeautifulSoup(html_text, 'lxml')
     alphabet_temp = soup.find_all('a',
@@ -27,10 +27,10 @@ def find_section_link(url):
     return alphabet_list
 
 
-"""find all links of each recipe grouped within each sub sections"""
+def extract_links(output_file: str, base_site: str):
+    """find all links of each recipe grouped within each sub sections
 
-
-def extract_links(output_file, base_site):
+    """
     base_soup = BeautifulSoup(base_site, 'lxml')
     all_url = []
     alphabet_list = find_all_alphabet_links(base_soup)
@@ -39,6 +39,6 @@ def extract_links(output_file, base_site):
 
     with open(output_file, 'w') as outfile:
         for item in all_url:
-            if 'article' not in item:
+            if not any(x in item for x in {'article', 'longform'}):
                 outfile.write(item)
                 outfile.write('\n')

@@ -10,13 +10,14 @@ A Recipe that contains the its relevant data.
 
 
 class Recipe:
-    def __init__(self, identification, name, ingredients, url, time, rating):
+    def __init__(self, identification, name, ingredients, url, time, rating, imagine_url):
         self.identification = identification
         self.name = name
         self.ingredients = ingredients
         self.url = url
         self.time = time
         self.rating = rating
+        self.imagine_url = imagine_url
 
 
 """
@@ -31,5 +32,6 @@ def encode_recipe(recipe):
                 'ingredients': recipe.ingredients,
                 'url': recipe.url,
                 'time': recipe.time,
-                'rating': recipe.rating}
+                'rating': recipe.rating,
+                'imagine_url': recipe.imagine_url}
     raise TypeError(f'Object {recipe} is not of type recipe')
