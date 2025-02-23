@@ -1,6 +1,5 @@
 def remove_gallery(input_urls: str):
     """Removes unwanted gallery urls"""
-
     # Read all lines from the file
     with open(input_urls, 'r', encoding='utf8') as infile:
         data = infile.readlines()
@@ -17,7 +16,6 @@ def remove_gallery(input_urls: str):
 
 def trim(output_urls: str, input_urls: str):
     """Trims the list of all urls down to one quarter of its original size"""
-
     infile = open(input_urls, 'r', encoding='utf8')
     outfile = open(output_urls, 'w', encoding='utf8')
 

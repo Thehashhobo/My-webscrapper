@@ -46,7 +46,7 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
     infile = open(input_file, 'r', encoding='utf8')
     outfile = open(output_file, 'w', encoding='utf8')
     original_url = infile.readlines()
-    counter = 1690
+    counter = 0
 
     for item in original_url:
         response_json = requests.get(item.strip('\n'), allow_redirects=False).json()
@@ -63,9 +63,19 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
             soup = BeautifulSoup(html_text, 'lxml')
             temp_name = soup.find('h1', class_='comp type--lion article-heading mntl-text-block').text
             temp_image = soup.find('img')
-            div_group = soup.find('div', {'class': 'comp recipe__steps mntl-block'})
-            if div_group:  # check if div_group is not None
-                instructions_spans = div_group.find_all('p', {'class': 'comp mntl-sc-block mntl-sc-block-html'})
+
+            outer_div = soup.find('div', class_='comp recipe__steps mntl-block')
+
+            # If this div exists, proceed
+            if outer_div:
+                # Find the inner div with class "comp recipe__steps mntl-block"
+                inner_div = outer_div.find('div', class_='comp recipe__steps-content mntl-sc-page mntl-block')
+
+                # If this inner div exists, proceed
+                if inner_div:
+                    # Find all p elements with class "comp mntl-sc-block mntl-sc-block-html"
+                    instructions_spans = inner_div.find_all('p', class_='comp mntl-sc-block mntl-sc-block-html')
+
             ingredient_spans = soup.find_all('span', attrs={'data-ingredient-name': 'true'})
             recipe_url = response_json.get('url', '')
             overview = soup.find('p', class_='comp type--dog article-subheading')

@@ -43,10 +43,13 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
     note that the number of lines in the in input file must be divisible by 5 as the input are handled in batch of 5
 
     """
+    # storage for temporary api links
+    track = open('data/api_storage.txt', 'a')
 
+    instructions_spans = []
     json_input = []
     infile = open(input_file, 'r', encoding='utf8')
-    outfile = open(output_file, 'w', encoding='utf8')
+    outfile = open(output_file, 'a', encoding='utf8')
     original_url = infile.readlines()
     counter = 0
 
@@ -54,11 +57,11 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
         api_urls = []
         for i in original_url[x - 5: x]:
             r = requests.post(url='https://async.scraperapi.com/jobs',
-                              json={'apiKey': '16550a1a2906130d49e61e994db77f23',
+                              json={'apiKey': '', # insert your api key here
                                     'url': i})
             res = json.loads(r.text)
             api_urls.append(res.get("statusUrl"))
-            print(res.get("statusUrl"))
+            track.write(res.get("statusUrl") + '\n')
         time.sleep(60)
 
         for item in api_urls:
@@ -77,7 +80,9 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
                 temp_name = soup.find('h1', class_='comp type--lion article-heading mntl-text-block').text
                 temp_image = soup.find('img')
                 ingredient_spans = soup.find_all('span', attrs={'data-ingredient-name': 'true'})
-                instructions_spans = soup.find_all('p', class_='comp mntl-sc-block mntl-sc-block-html')
+                div_group = soup.find('div', {'class': 'comp recipe__steps mntl-block'})
+                if div_group:  # check if div_group is not None
+                    instructions_spans = div_group.find_all('p', {'class': 'comp mntl-sc-block mntl-sc-block-html'})
                 recipe_url = response_json.get('url', '')
                 overview = soup.find('p', class_='comp type--dog article-subheading')
 
@@ -107,13 +112,13 @@ def extract_details(input_file: str, output_file: str, clean_ingredients: bool):
                     temp_rating = None
 
                 for steps in range(len(instructions_spans)):
-                    instructions.append("step " + str(steps) + " " + str(instructions_spans[steps].text).strip('\n'))
+                    instructions.append(str(instructions_spans[steps].text).strip('\n'))
 
                 new_recipe = Recipe(counter, temp_name, ingredients, recipe_url,
                                     temp_time, temp_rating, image_url, instructions, overview.text.strip('\n'))
                 json_input.append(encode_recipe(new_recipe))
 
-                data = infile.readline()
                 counter += 1
 
     json.dump(json_input, outfile, indent=4)
+    track.close()
