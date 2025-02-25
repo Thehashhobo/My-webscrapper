@@ -11,10 +11,24 @@ The web scraper is written in Python 3 using the following technologies:
 Install dependencies: `pip install -r requirements.txt`
 
 Choose your scraping method:
-For BeautifulSoup-based scraping: `web_scrapper/scrap.py`
-For Scraper API (recommended for large-scale scraping): `web_scrapper/scrap_alt.py`
-Once scraping is complete, run the final text processing/formatting functions: `web_scrapper/finalized_cleanup.py`
+For BeautifulSoup-based scraping: `web_scrapper/scrap.py`\
+For Scraper API (recommended for large-scale scraping): `web_scrapper/scrap_alt.py`\
+Once scraping is complete, run the final text processing/formatting functions: `web_scrapper/finalized_cleanup.py`\
 Finally, insert the data into our database with: `web_scrapper/mysql_insertion.py`
 
 ### Setting up the Database
-We step up the database by running: `mysql -u root -p < queries/setup.sql`
+We step up the database by running: `mysql -u root -p < queries/setup.sql` 
+The Database is structured as follows:\
+![Screenshot of the application](https://github.com/Thehashhobo/Recipe-Data-Analysis/blob/main/queries/structure.PNG)
+
+## Data Analysis using SQL
+The data can be analyzed with quuries with in `analysis.sql`, these analysis include:
+- Count number of recipes
+- Show complete recipe details
+- Top 10 recipes by rating
+- Top 10 recipes by cooking time and ratings (prefer faster recipes)
+- Most Common Ingredients
+- Recipes with the Most Ingredients
+- Fastest Cooking Recipes
+- Most Complex Recipes (most steps)
+- Distribution of Ratings
