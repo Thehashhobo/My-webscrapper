@@ -1,0 +1,5 @@
+mysql-connector-python
+spacy
+beautifulsoup4
+requests
+json

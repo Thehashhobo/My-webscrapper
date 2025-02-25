@@ -1,5 +1,7 @@
+-- Create Database and Tables for RecipeDB
 CREATE DATABASE Recipedb;
 USE RecipeDB;
+
 -- Main Recipes Table
 CREATE TABLE Recipes (
     id INT PRIMARY KEY,
@@ -52,3 +54,6 @@ ALTER TABLE Instructions CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicod
 
 ALTER TABLE Instructions 
 MODIFY instruction TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Increase group_concat_max_len to handle large concatenated strings from instructions
+SET SESSION group_concat_max_len = 16384;

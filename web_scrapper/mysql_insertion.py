@@ -2,7 +2,7 @@ import json
 import mysql.connector
 
 # Load JSON data (replace with your own file path)
-with open("C:\\Users\\Jerry\\PycharmProjects\\mywebscrapper\\src\\data\\mid_out.json", "r", encoding="utf-8") as file:
+with open("C:\\Users\\Jerry\\PycharmProjects\\mywebscrapper\\data\\mid_out.json", "r", encoding="utf-8") as file:
 
 
     recipes = json.load(file)
@@ -11,10 +11,11 @@ with open("C:\\Users\\Jerry\\PycharmProjects\\mywebscrapper\\src\\data\\mid_out.
 try:
     conn = mysql.connector.connect(
         # replace with your own server details
-        host="",
-        user="",
-        password="",
-        database=""
+        host="localhost",
+        user="root",
+        password="C04082015l",
+        database="Recipedb",
+        charset="utf8mb4"
     )
 
     cursor = conn.cursor()
