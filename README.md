@@ -32,3 +32,22 @@ The data can be analyzed with quuries with in `analysis.sql`, these analysis inc
 - Fastest Cooking Recipes
 - Most Complex Recipes (most steps)
 - Distribution of Ratings
+
+## Exploratory  Data Analysis With Juypter notebook
+This section explores the recipe dataset to uncover insights about ingredient usage, cooking times, and ratings. Using Jupyter Notebook, we apply various statistical and visualization techniques to understand the structure of the data and identify patterns.
+### The Exploratory Data Analysis (EDA) follows these steps:
+- Load and Clean Data → Retrieve structured recipe data from the MySQL database.
+- Handle Missing Values → Identify and address missing or inconsistent entries.
+- Feature Engineering → Create new variables such as number of ingredients, instructions, and cooking time in minutes.
+- Data Distribution Analysis → Visualize how features like ratings, ingredient counts, and cooking times are distributed.
+- Correlation Analysis → Identify relationships between ingredients, cooking times, and ratings.
+- Outlier Detection → Detect anomalies in cooking time and ingredient counts.
+### Technologies Used
+- Jupyter Notebook → Interactive environment for EDA.
+- Pandas → Data manipulation and processing.
+- Seaborn & Matplotlib → Data visualization.
+- SQLAlchemy → connect to our database for better integrations with Pandas.
+
+
+
+
