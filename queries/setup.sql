@@ -57,3 +57,21 @@ MODIFY instruction TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Increase group_concat_max_len to handle large concatenated strings from instructions
 SET SESSION group_concat_max_len = 16384;
+
+-- Find Duplicate Recipes
+SELECT name, url, COUNT(*) AS duplicate_count
+FROM Recipes
+GROUP BY name, url, 
+HAVING COUNT(*) > 1;
+
+-- Remove Duplicate Recipes
+DELETE r1 
+FROM Recipes r1
+JOIN Recipes r2 
+ON r1.name = r2.name 
+AND r1.url = r2.url
+AND r1.time = r2.time
+AND r1.rating = r2.rating
+AND r1.image_url = r2.image_url
+AND r1.overview = r2.overview
+AND r1.id > r2.id;  

@@ -1,5 +1,12 @@
+# Scraper requirements
 mysql-connector-python
 spacy
 beautifulsoup4
 requests
 json
+
+# Model building requirements
+pandas
+sqlalchemy
+matplotlib
+seaborn

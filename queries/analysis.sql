@@ -1,25 +1,7 @@
--- count number of recipes
+-- Count number of recipes
 SELECT COUNT(*) AS recipe_count FROM Recipes;
 
--- Find Duplicate Recipes
-SELECT name, url, time, rating, image_url, overview, COUNT(*) AS duplicate_count
-FROM Recipes
-GROUP BY name, url,
-HAVING COUNT(*) > 1;
-
--- Remove Duplicate Recipes
-DELETE r1 
-FROM Recipes r1
-JOIN Recipes r2 
-ON r1.name = r2.name 
-AND r1.url = r2.url
-AND r1.time = r2.time
-AND r1.rating = r2.rating
-AND r1.image_url = r2.image_url
-AND r1.overview = r2.overview
-AND r1.id > r2.id;  -- Ensures we keep the recipe with the lowest ID
-
--- show complete recipe details
+-- Show complete recipe details
 SELECT 
     r.id AS Recipe_ID,
     r.name AS Recipe_Name, 
@@ -28,12 +10,14 @@ SELECT
     r.rating AS Rating,
     r.image_url AS Image_URL,
     r.overview AS Overview,
+    r.num_ingredients,
+    r.num_instructions,
     GROUP_CONCAT(DISTINCT i.ingredient ORDER BY i.ingredient ASC SEPARATOR ', ') AS Ingredients,
     GROUP_CONCAT(DISTINCT CONCAT(instr.step_order, '. ', instr.instruction) ORDER BY instr.step_order ASC SEPARATOR '\n') AS Instructions
 FROM Recipes r
 LEFT JOIN Ingredients i ON r.id = i.recipe_id
 LEFT JOIN Instructions instr ON r.id = instr.recipe_id
-WHERE r.name LIKE '%Boilermaker Tailgate Chili%'  -- Replace with actual recipe name or partial match
+WHERE r.name LIKE '%Amazing Peanut Butter Cup Biscotti%'  -- Replace with actual recipe name or partial match
 GROUP BY r.id, r.name, r.url, r.time, r.rating, r.image_url, r.overview;
 
 
@@ -69,8 +53,11 @@ LIMIT 10;
 -- Fastest Cooking Recipes
 SELECT name, time
 FROM Recipes
+WHERE time REGEXP '^[0-9]+ mins$'  -- Ensures we only extract numerical time values
+ORDER BY CAST(REPLACE(time, ' mins', '') AS UNSIGNED) ASC
+LIMIT 50;
 
--- Most Complex Recipes
+-- Most Complex Recipes (most steps)
 SELECT r.name, COUNT(i.id) AS step_count
 FROM Recipes r
 JOIN Instructions i ON r.id = i.recipe_id
